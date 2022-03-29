@@ -23,7 +23,7 @@ namespace ToDoAPI.API.Controllers
             //Below we create a list of Entity Framework ToDo objects. In an API, it is best practice to install Entity Framework to the API layer when needing to accomplish this task.
             List<ToDoViewModel> toDos = db.TodoItems.Include("Category").Select(t => new ToDoViewModel()
             {
-                //Assign the columns of the Resources db table to the ResourceViewModel object, so we can use the data (send the data back to requesting app)
+                //Assign the columns of the ToDo db table to the ToDoViewModel object, so we can use the data (send the data back to requesting app)
                 TodoId = t.TodoId,
                 Action = t.Action,
                 Done = t.Done,
@@ -42,18 +42,18 @@ namespace ToDoAPI.API.Controllers
                 return NotFound();
             }
             //Everything is good, return the data
-            return Ok(toDos); //resources are being passed in the response back to the requesting app.
+            return Ok(toDos); //ToDo are being passed in the response back to the requesting app.
 
         }//end GetToDo()
 
         //GET api/todo/id
-        public IHttpActionResult GetToDos(int id)
+        public IHttpActionResult GetToDo(int id)
         {
             //Create a new ToDoViewModel object and assign it to the appropriate ToDoItem from the db
             ToDoViewModel resource = db.TodoItems.Include("Category").Where(t => t.TodoId == id).Select(t =>
             new ToDoViewModel()
             {
-                //COPY THE ASSIGNMENTS FROM THE GETRESOURCES() ABOVE
+                //COPY THE ASSIGNMENTS FROM THE GETTODOS() ABOVE
                 TodoId = t.TodoId,
                 Action = t.Action,
                 Done = t.Done,
@@ -66,7 +66,7 @@ namespace ToDoAPI.API.Controllers
                 }            
         }).FirstOrDefault();
 
-            //scopeless if -once the teturn executes the scopes are closed.
+            //scopeless if -once the return executes the scopes are closed.
             if (resource == null)
                 return NotFound();
 
@@ -74,10 +74,10 @@ namespace ToDoAPI.API.Controllers
 
         }//end GetToDo(id)
 
-        //POST - api/Resources (HttpPost)
+        //POST - api/todo (HttpPost)
         public IHttpActionResult PostResource(ToDoViewModel toDo)
         {
-            //1. Check to validate the object - we need to know that all the data necessary to create a resource is there
+            //1. Check to validate the object - we need to know that all the data necessary to create a todolistitem is there
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Data");
@@ -96,10 +96,10 @@ namespace ToDoAPI.API.Controllers
 
             return Ok(newToDo);
 
-        }//End Post Resource
+        }//End Post 
 
         //PUT - api/Todo (HttpPut)
-        public IHttpActionResult PutResource(ToDoViewModel toDo)
+        public IHttpActionResult PutToDo(ToDoViewModel toDo)
         {
             if (!ModelState.IsValid)
             {
@@ -124,10 +124,10 @@ namespace ToDoAPI.API.Controllers
 
         }//end Put
 
-        //DELETE - api/ToDo/id (HTTPDelete)
+        //DELETE - api/Todo/id (HTTPDelete)
         public IHttpActionResult DeleteResource(int id)
         {
-            //Get the resource from the API to make sure there's a resource with this id
+            //Get the todo from the API to make sure there's a resource with this id
             TodoItem toDo = db.TodoItems.Where(t => t.TodoId == id).FirstOrDefault();
 
             if (toDo != null)
